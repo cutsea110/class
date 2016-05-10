@@ -31,8 +31,10 @@ instance
 test₀ : Bool
 test₀ = true == false ∨ 4 /= 5
 
-record Ord {t : Set} (eqT : Eq t) : Set where
-  field _<_ : t → t → Bool
+record Ord (t : Set) : Set where
+  field
+    eqT : Eq t
+    _<_ : t → t → Bool
   _<=_ : t → t → Bool
   x <= y = x < y ∨ x === y where open Eq eqT renaming (_==_ to _===_)
   _>_ : t → t → Bool
@@ -40,17 +42,20 @@ record Ord {t : Set} (eqT : Eq t) : Set where
   _>=_ : t → t → Bool
   x >= y = y <= x
 
+open Ord ⦃ ... ⦄
+
 instance
-  ltN : Ord eqN
-  ltN = record { _<_ = lt' }
+  ordN : Ord ℕ
+  ordN = record { eqT = eqN; _<_ = lt' }
     where
       lt' : ℕ → ℕ → Bool
       lt' zero zero = false
-      lt' zero (suc m) = true
-      lt' (suc n) zero = false
-      lt' (suc n) (suc m) = lt' n m
-  ltB : Ord eqB
-  ltB = record { _<_ = lt' }
+      lt' zero (suc y) = true
+      lt' (suc x) zero = false
+      lt' (suc x) (suc y) = lt' x y
+
+  ordB : Ord Bool
+  ordB = record { eqT = eqB; _<_ = lt' }
     where
       lt' : Bool → Bool → Bool
       lt' false false = false
@@ -58,29 +63,48 @@ instance
       lt' true false = true
       lt' true true = false
 
-open Ord ⦃ ... ⦄ using (_<_)
-
 test₁ : Bool
-test₁ = 5 < 3 ∨ false < true
+test₁ = 5 < 3 ∧ false < true
 test₂ : Bool
-test₂ = false < true ∧ 5 < 3
+test₂ = 5 <= 3 ∨ false <= true
+test₃ : Bool
+test₃ = 5 > 3 ∧ false > true
+test₄ : Bool
+test₄ = 5 >= 3 ∨ false >= true
 
 open import Data.List
 
+instance
+  listEq : {t : Set} → ⦃ eqT : Eq t ⦄ → Eq (List t)
+  listEq {t} ⦃ eqT ⦄ = record { _==_ = eq' }
+    where
+      eq' : List t → List t → Bool
+      eq' [] [] = true
+      eq' [] (x ∷ y) = false
+      eq' (x ∷ x₁) [] = false
+      eq' (x ∷ xs) (y ∷ ys) = x == y ∧ eq' xs ys
 
-listEq : {t : Set} → ⦃ eqT : Eq t ⦄ → Eq (List t)
-listEq {t} ⦃ eqT ⦄ = record { _==_ = eq' }
-  where
-    eq' : List t → List t → Bool
-    eq' [] [] = true
-    eq' [] (y ∷ ys) = false
-    eq' (x ∷ xs) [] = false
-    eq' (x ∷ xs) (y ∷ ys) = x == y ∧ eq' xs ys
-{--
-test₃ = Eq._==_ listEq (1 ∷ []) (1 ∷ 2 ∷ [])
-test₄ = (1 ∷ []) == (1 ∷ 2 ∷ [])
-  where listEqN = listEq ⦃ eqN ⦄ -- need this!
+test₅ : Bool
+test₅ = (1 ∷ []) == (2 ∷ 3 ∷ []) ∧ (true ∷ []) /= (false ∷ true ∷ [])
 
-test₅ = (true ∷ false ∷ []) == (true ∷ false ∷ [])
-  where listEqB = listEq ⦃ eqB ⦄ -- need this!
---}
+instance
+  listOrd : {t : Set} → ⦃ ordT : Ord t ⦄ → Ord (List t)
+  listOrd {t} ⦃ ordT ⦄ = record { eqT = listEq {t} ⦃ eqT ⦄ ; _<_ = lt' }
+    where
+      lt' : List t → List t → Bool
+      lt' [] [] = false
+      lt' [] (x ∷ y) = true
+      lt' (x ∷ xs) [] = false
+      lt' (x ∷ xs) (y ∷ ys) = x < y ∧ lt' xs ys
+
+test₆ : Bool
+test₆ = (1 ∷ []) < (2 ∷ 3 ∷ []) ∧ (true ∷ []) < (false ∷ true ∷ [])
+
+test₇ : Bool
+test₇ = (1 ∷ []) <= (2 ∷ 3 ∷ []) ∧ (true ∷ []) <= (false ∷ true ∷ [])
+
+test₈ : Bool
+test₈ = (1 ∷ []) > (2 ∷ 3 ∷ []) ∧ (true ∷ []) > (false ∷ true ∷ [])
+
+test₉ : Bool
+test₉ = (1 ∷ []) >= (2 ∷ 3 ∷ []) ∧ (true ∷ []) >= (false ∷ true ∷ [])
