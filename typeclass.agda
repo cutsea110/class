@@ -16,12 +16,12 @@ open Eq ⦃...⦄ public
 
 instance
   Eqℕ : Eq ℕ
-  _==_ {{Eqℕ}} = Agda.Builtin.Nat._==_ where open import Agda.Builtin.Nat
+  _==_ ⦃ Eqℕ ⦄ = Agda.Builtin.Nat._==_ where open import Agda.Builtin.Nat
 
 instance
   EqBool : Eq Bool
-  _==_ {{EqBool}} false t = not t
-  _==_ {{EqBool}} true t  = t
+  _==_ ⦃ EqBool ⦄ false t = not t
+  _==_ ⦃ EqBool ⦄ true t  = t
 
 open import Data.List
 
@@ -51,8 +51,8 @@ instance
   _<_ ⦃ Ordℕ ⦄ = Agda.Builtin.Nat._<_ where open import Agda.Builtin.Nat
 
   OrdBool : Ord Bool
-  _<_ {{OrdBool}} false t = t
-  _<_ {{OrdBool}} true _ = false
+  _<_ ⦃ OrdBool ⦄ false t = t
+  _<_ ⦃ OrdBool ⦄ true _ = false
 
 
 record Num (A : Set) : Set where
