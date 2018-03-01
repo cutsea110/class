@@ -1,7 +1,7 @@
 module typeclass where
 
 open import Data.Bool
-open import Data.Nat hiding (_<_; _>_; _≤_; _≥_)
+open import Data.Nat hiding (_<_; _>_; _≤_; _≥_) renaming (_∸_ to _-_)
 
 record Eq (A : Set) : Set where
   field
@@ -65,3 +65,21 @@ instance
 
 _≤3 : {A : Set} {{_ : Ord A}} {{_ : Num A}} → A → Bool
 x ≤3 = x ≤ fromℕ 3
+
+
+data _≡_ {A : Set} (x : A) : A → Set where
+  instance refl : x ≡ x
+
+infixr 3 _≡_
+
+data Fin : ℕ → Set where
+  zero : {n : ℕ} → Fin (suc n)
+  succ : {n : ℕ} → Fin n → Fin (suc n)
+
+mkFin : {n : ℕ} (m : ℕ) {{_ : suc m - n ≡ 0}} → Fin n
+mkFin {zero} m {{}} -- absurd
+mkFin {suc n} zero = zero
+mkFin {suc n} (suc m) = succ (mkFin m)
+
+five : Fin 6
+five = mkFin 5
