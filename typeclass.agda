@@ -8,6 +8,8 @@ record Eq (A : Set) : Set where
   _/=_ : A → A → Bool
   x /= y = not (x == y)
 
+  infixr 3 _==_ _/=_
+
 open Eq ⦃...⦄ public
 instance
   Eqℕ : Eq ℕ
@@ -20,3 +22,13 @@ instance
   EqBool : Eq Bool
   _==_ {{EqBool}} false t = not t
   _==_ {{EqBool}} true t  = t
+
+open import Data.List
+
+instance
+  EqList : {A : Set} ⦃ _ : Eq A ⦄ → Eq (List A)
+  _==_ {{EqList}} [] [] = true
+  _==_ {{EqList}} [] (_ ∷ _) = false
+  _==_ {{EqList}} (_ ∷ _) [] = false
+  _==_ {{EqList}} (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
+
