@@ -27,10 +27,10 @@ open import Data.List
 
 instance
   EqList : {A : Set} ⦃ _ : Eq A ⦄ → Eq (List A)
-  _==_ {{EqList}} [] [] = true
-  _==_ {{EqList}} [] (_ ∷ _) = false
-  _==_ {{EqList}} (_ ∷ _) [] = false
-  _==_ {{EqList}} (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
+  _==_ ⦃ EqList ⦄ [] [] = true
+  _==_ ⦃ EqList ⦄ [] (_ ∷ _) = false
+  _==_ ⦃ EqList ⦄ (_ ∷ _) [] = false
+  _==_ ⦃ EqList ⦄ (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
 
 record Ord (A : Set) : Set where
   field
@@ -48,9 +48,22 @@ open Ord ⦃...⦄ hiding (eqA)
 
 instance
   Ordℕ : Ord ℕ
-  _<_ {{Ordℕ}} = Agda.Builtin.Nat._<_ where open import Agda.Builtin.Nat
+  _<_ ⦃ Ordℕ ⦄ = Agda.Builtin.Nat._<_ where open import Agda.Builtin.Nat
 
   OrdBool : Ord Bool
   _<_ {{OrdBool}} false t = t
   _<_ {{OrdBool}} true _ = false
 
+
+record Num (A : Set) : Set where
+  field
+    fromℕ : ℕ → A
+    overlap ⦃ eqA ⦄ : Eq A
+open Num ⦃...⦄ hiding (eqA)
+
+instance
+  Numℕ : Num ℕ
+  fromℕ ⦃ Numℕ ⦄ n = n
+
+_≤3 : {A : Set} ⦃ _ : Ord A ⦄ ⦃ _ : Num A ⦄ → A → Bool
+x ≤3 = x ≤ fromℕ 3
