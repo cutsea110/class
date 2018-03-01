@@ -113,3 +113,19 @@ fail₁ = zero -- it  -- ambiguous: zero or succ (succ zero)
 
 fail₂ : {A : Set} (x y : A) (xs : List A) {{i : x ∈ xs}} → x ∈ y ∷ x ∷ xs
 fail₂ x y xs = succ zero -- it -- succ zero or succ (succ i)
+
+record Monoid (A : Set) : Set where
+  field
+    mempty : A
+    _<>_   : A → A → A
+
+open Monoid {{...}} public
+
+instance
+  ListMonoid : ∀ {A} → Monoid (List A)
+  ListMonoid = record { mempty = [] ; _<>_ = _++_ }
+
+mconcat : {A : Set} {{_ : Monoid A}} → List A → A
+mconcat [] = mempty
+mconcat (x ∷ xs) = x <> mconcat xs
+
