@@ -1,7 +1,7 @@
 module typeclass where
 
 open import Data.Bool
-open import Data.Nat hiding (_<_; _>_)
+open import Data.Nat hiding (_<_; _>_; _≤_; _≥_)
 
 record Eq (A : Set) : Set where
   field
@@ -37,12 +37,12 @@ record Ord (A : Set) : Set where
     _<_ : A → A → Bool
     overlap ⦃ eqA ⦄ : Eq A
     
-  _<=_ : A → A → Bool
-  x <= y = (x < y) ∨ (x == y)
+  _≤_ : A → A → Bool
+  x ≤ y = (x < y) ∨ (x == y)
   _>_ : A → A → Bool
-  x > y = not (x <= y)
-  _>=_ : A → A → Bool
-  x >= y = (x > y) ∨ (x == y)
+  x > y = not (x ≤ y)
+  _≥_ : A → A → Bool
+  x ≥ y = (x > y) ∨ (x == y)
 
 open Ord ⦃...⦄ hiding (eqA)
 
