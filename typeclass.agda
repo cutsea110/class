@@ -83,3 +83,9 @@ mkFin {suc n} (suc m) = succ (mkFin m)
 
 five : Fin 6
 five = mkFin 5
+
+-- see above mkFin
+mkFin' : {n : ℕ} (m : ℕ) {p : suc m - n ≡ 0} → Fin n
+mkFin' {zero} m {} -- absurd
+mkFin' {suc n} zero {p} = zero
+mkFin' {suc n} (suc m) {p} = succ (mkFin' {n} m {p})
