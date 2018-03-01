@@ -11,7 +11,12 @@ record Eq (A : Set) : Set where
 open Eq ⦃...⦄ public
 instance
   Eqℕ : Eq ℕ
-  _==_ {{Eqℕ}} zero zero = true
-  _==_ {{Eqℕ}} zero (suc y) = false
-  _==_ {{Eqℕ}} (suc x) zero = false
+  _==_ {{Eqℕ}} zero zero       = true
+  _==_ {{Eqℕ}} zero (suc _)    = false
+  _==_ {{Eqℕ}} (suc _) zero    = false
   _==_ {{Eqℕ}} (suc x) (suc y) = x == y
+
+instance
+  EqBool : Eq Bool
+  _==_ {{EqBool}} false t = not t
+  _==_ {{EqBool}} true t  = t
