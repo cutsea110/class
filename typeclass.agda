@@ -89,3 +89,21 @@ mkFin' : {n : ℕ} (m : ℕ) {p : suc m - n ≡ 0} → Fin n
 mkFin' {zero} m {} -- absurd
 mkFin' {suc n} zero {p} = zero
 mkFin' {suc n} (suc m) {p} = succ (mkFin' {n} m {p})
+
+infix 4 _∈_
+data _∈_ {A : Set} (x : A) : List A → Set where
+  instance
+    zero : ∀ {xs} →  x ∈ x ∷ xs
+    succ : ∀ {y xs} → x ∈ xs → x ∈ y ∷ xs
+
+it : ∀ {a} {A : Set a} {{_ : A}} → A
+it {{x}} = x
+
+ex₁ : 1 + 2 ∈ 1 ∷ 2 ∷ 3 ∷ 4 ∷ []
+ex₁ = it -- succ (succ zero)
+
+ex₂ : {A : Set} (x y : A) (xs : List A) → x ∈ y ∷ y ∷ x ∷ xs
+ex₂ x y xs = it -- succ (succ zero)
+
+ex₃ : {A : Set} (x y : A) (xs : List A) {{i : x ∈ xs}} → x ∈ y ∷ y ∷ xs
+ex₃ x y xs {{i}} = it -- succ (succ i)
