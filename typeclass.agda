@@ -22,7 +22,7 @@ instance
   _==_ {{EqBool}} false t = not t
   _==_ {{EqBool}} true t  = t
 
-open import Data.List
+open import Data.List hiding (sum)
 
 instance
   EqList : {A : Set} {{_ : Eq A}} → Eq (List A)
@@ -129,3 +129,10 @@ mconcat : {A : Set} {{_ : Monoid A}} → List A → A
 mconcat [] = mempty
 mconcat (x ∷ xs) = x <> mconcat xs
 
+sum : List ℕ → ℕ
+sum xs =
+  let
+    instance
+      ℕMonoid : Monoid ℕ
+      ℕMonoid = record { mempty = 0; _<>_ = _+_ }
+  in mconcat xs
