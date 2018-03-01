@@ -107,3 +107,9 @@ ex₂ x y xs = it -- succ (succ zero)
 
 ex₃ : {A : Set} (x y : A) (xs : List A) {{i : x ∈ xs}} → x ∈ y ∷ y ∷ xs
 ex₃ x y xs {{i}} = it -- succ (succ i)
+
+fail₁ : 1 ∈ 1 ∷ 2 ∷ 1 ∷ []
+fail₁ = zero -- it  -- ambiguous: zero or succ (succ zero)
+
+fail₂ : {A : Set} (x y : A) (xs : List A) {{i : x ∈ xs}} → x ∈ y ∷ x ∷ xs
+fail₂ x y xs = succ zero -- it -- succ zero or succ (succ i)
