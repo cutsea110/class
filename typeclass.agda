@@ -4,9 +4,11 @@ open import Data.Bool
 open import Data.Nat hiding (_<_; _>_)
 
 record Eq (A : Set) : Set where
-  field _==_ : A → A → Bool
+  field
+    _==_ : A → A → Bool
+
   _/=_ : A → A → Bool
-  _/=_ = _==_
+  x /= y = not (x == y)
 
   infixr 3 _==_ _/=_
 
@@ -14,10 +16,7 @@ open Eq ⦃...⦄ public
 
 instance
   Eqℕ : Eq ℕ
-  _==_ {{Eqℕ}} zero zero       = true
-  _==_ {{Eqℕ}} zero (suc _)    = false
-  _==_ {{Eqℕ}} (suc _) zero    = false
-  _==_ {{Eqℕ}} (suc x) (suc y) = x == y
+  _==_ {{Eqℕ}} = Agda.Builtin.Nat._==_ where open import Agda.Builtin.Nat
 
 instance
   EqBool : Eq Bool
@@ -34,10 +33,24 @@ instance
   _==_ {{EqList}} (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
 
 record Ord (A : Set) : Set where
-  field _<_ : A → A → Bool
-        _>_ : A → A → Bool
-        _<=_ : A → A → Bool
-        _>=_ : A → A → Bool
-        overlap ⦃ eqA ⦄ : Eq A
+  field
+    _<_ : A → A → Bool
+    overlap ⦃ eqA ⦄ : Eq A
+    
+  _<=_ : A → A → Bool
+  x <= y = (x < y) ∨ (x == y)
+  _>_ : A → A → Bool
+  x > y = not (x <= y)
+  _>=_ : A → A → Bool
+  x >= y = (x > y) ∨ (x == y)
 
 open Ord ⦃...⦄ hiding (eqA)
+
+instance
+  Ordℕ : Ord ℕ
+  _<_ {{Ordℕ}} = Agda.Builtin.Nat._<_ where open import Agda.Builtin.Nat
+
+  OrdBool : Ord Bool
+  _<_ {{OrdBool}} false t = t
+  _<_ {{OrdBool}} true _ = false
+
