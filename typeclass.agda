@@ -1,16 +1,17 @@
 module typeclass where
 
 open import Data.Bool
-open import Data.Nat
+open import Data.Nat hiding (_<_; _>_)
 
 record Eq (A : Set) : Set where
   field _==_ : A → A → Bool
   _/=_ : A → A → Bool
-  x /= y = not (x == y)
+  _/=_ = _==_
 
   infixr 3 _==_ _/=_
 
 open Eq ⦃...⦄ public
+
 instance
   Eqℕ : Eq ℕ
   _==_ {{Eqℕ}} zero zero       = true
@@ -32,3 +33,11 @@ instance
   _==_ {{EqList}} (_ ∷ _) [] = false
   _==_ {{EqList}} (x ∷ xs) (y ∷ ys) = (x == y) ∧ (xs == ys)
 
+record Ord (A : Set) : Set where
+  field _<_ : A → A → Bool
+        _>_ : A → A → Bool
+        _<=_ : A → A → Bool
+        _>=_ : A → A → Bool
+        overlap ⦃ eqA ⦄ : Eq A
+
+open Ord ⦃...⦄ hiding (eqA)
