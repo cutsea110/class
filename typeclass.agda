@@ -1,6 +1,6 @@
 module typeclass where
 
-open import Data.Bool
+open import Data.Bool using (Bool; true; false; not; _∧_; _∨_)
 open import Data.Nat hiding (_<_; _>_; _≤_; _≥_) renaming (_∸_ to _-_)
 
 record Eq (A : Set) : Set where
@@ -100,13 +100,13 @@ it : ∀ {a} {A : Set a} {{_ : A}} → A
 it {{x}} = x
 
 ex₁ : 1 + 2 ∈ 1 ∷ 2 ∷ 3 ∷ 4 ∷ []
-ex₁ = it -- succ (succ zero)
+ex₁ = succ (succ zero)
 
 ex₂ : {A : Set} (x y : A) (xs : List A) → x ∈ y ∷ y ∷ x ∷ xs
-ex₂ x y xs = it -- succ (succ zero)
+ex₂ x y xs = succ (succ zero)
 
 ex₃ : {A : Set} (x y : A) (xs : List A) {{i : x ∈ xs}} → x ∈ y ∷ y ∷ xs
-ex₃ x y xs {{i}} = it -- succ (succ i)
+ex₃ x y xs {{i}} = succ (succ i)
 
 fail₁ : 1 ∈ 1 ∷ 2 ∷ 1 ∷ []
 fail₁ = zero -- it  -- ambiguous: zero or succ (succ zero)
