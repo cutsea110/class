@@ -1,6 +1,6 @@
 module class where
 
-open import Data.Bool
+open import Data.Bool hiding (_<_)
 open import Data.Nat hiding (_<_; _>_)
 
 record Eq (t : Set) : Set where
